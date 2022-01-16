@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 package mosso
 
 import (
@@ -32,6 +30,7 @@ func TestDebugShowContentWithJSON_WithWriteFile(t *testing.T) {
 		WithSpecificOfVisual(true),
 		WithSpecificOfBottomSpaceLine(1),
 		WithSpecificOfWriteFile(true),
+		WithSpecificOfFilename("hello.json"),
 	)
 }
 
