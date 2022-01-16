@@ -26,6 +26,7 @@ type options struct {
 	typ             bool
 	fileInfo        bool
 	writeFile       bool
+	filename       	string
 	bottomSpaceLine int
 }
 
@@ -68,5 +69,11 @@ func WithSpecificOfBottomSpaceLine(number int) Option {
 func WithSpecificOfWriteFile(writeFile bool) Option {
 	return optionsFunc(func(ops *options) {
 		ops.writeFile = writeFile
+	})
+}
+
+func WithSpecificOfFilename(filename string) Option {
+	return optionsFunc(func(ops *options) {
+		ops.filename = filename
 	})
 }

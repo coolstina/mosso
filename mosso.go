@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package mosso
 
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"runtime"
+
+	"github.com/coolstina/fsfire"
 )
 
 const (
@@ -49,7 +49,7 @@ func DebugContentWithJSON(data interface{}, ops ...Option) string {
 		o.apply(&options)
 	}
 
-	var show, storage = bytes.Buffer{},bytes.Buffer{}
+	var show, storage = bytes.Buffer{}, bytes.Buffer{}
 	defer show.Reset()
 	defer storage.Reset()
 
@@ -86,6 +86,24 @@ func DebugContentWithJSON(data interface{}, ops ...Option) string {
 func writerFileContent(options options, storage bytes.Buffer, content string) {
 	if options.writeFile {
 		storage.WriteString(fmt.Sprintf("%s\n", content))
-		ioutil.WriteFile(DefaultWriteFileName, storage.Bytes(), os.ModePerm)
+
+		filename := DefaultWriteFileName
+		if options.filename != "" {
+			filename = options.filename
+		}
+
+		if fsfire.IsNotExists(filename) {
+			err := fsfire.Touch(filename)
+			if err != nil {
+				filename = DefaultWriteFileName
+			}
+		}
+
+		file, err := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
+		if err == nil && file != nil {
+			defer file.Close()
+			_ = file.Truncate(0)
+			_, _ = file.Write(storage.Bytes())
+		}
 	}
 }
